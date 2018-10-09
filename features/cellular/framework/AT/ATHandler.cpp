@@ -301,11 +301,17 @@ void ATHandler::fill_buffer()
        ssize_t len = _fileHandle->read(_recv_buff + _recv_len, sizeof(_recv_buff) - _recv_len);
         if (len > 0) {
             _recv_len += len;
-           at_debug("\n----------readable----------: %d\n", _recv_len);
-           for (size_t i = _recv_pos; i < _recv_len; i++) {
-               at_debug("%c", _recv_buff[i]);
-           }
-           at_debug("\n----------readable----------\n");
+
+            at_debug("reading: ", _recv_len);
+            for (size_t i = _recv_pos; i < _recv_len; i++) {
+                if (_recv_buff[i] == '\n' || _recv_buff[i] == '\r') {
+                    at_debug("·");
+                } else {
+                    at_debug("%c", _recv_buff[i]);
+                }
+            }
+            at_debug("\n");
+
            return;
        } else if (len != -EAGAIN && len != 0) {
            tr_warn("%s error: %d while reading", __func__, len);
@@ -410,11 +416,13 @@ ssize_t ATHandler::read_bytes(uint8_t *buf, size_t len)
 ssize_t ATHandler::read_string(char *buf, size_t size, bool read_even_stop_tag)
 {
     tr_debug("%s", __func__);
+    /*
     at_debug("\n----------read_string buff:----------\n");
     for (size_t i = _recv_pos; i < _recv_len; i++) {
         at_debug("%c", _recv_buff[i]);
     }
     at_debug("\n----------buff----------\n");
+    */
 
     if (_last_err || !_stop_tag || (_stop_tag->found && read_even_stop_tag == false)) {
         return -1;
@@ -674,11 +682,14 @@ void ATHandler::resp(const char *prefix, bool check_urc)
 {
     tr_debug("%s: %s", __func__, prefix);
 
-    at_debug("\n----------resp buff:----------\n");
+    /*
+    at_debug("\nresp buff: ");
     for (size_t i = _recv_pos; i < _recv_len; i++) {
+        if (_recv_buff[i] == '\n' || _recv_buff[i] == '\r') {
         at_debug("%c", _recv_buff[i]);
     }
-    at_debug("\n----------buff----------\n");
+    at_debug("\n");
+    */
 
     _prefix_matched = false;
     _urc_matched = false;
@@ -1031,6 +1042,19 @@ ssize_t ATHandler::write(const void *data, size_t len)
 
     int count = poll(&fhs, 1, _at_timeout);
     if (count > 0 && (fhs.revents & POLLOUT)) {
+
+            if (len > 0) {
+           at_debug("writing: ", _recv_len);
+           for (size_t i = 0; i < len; i++) {
+               if (((char*)data)[i] == '\n' || ((char*)data)[i] == '\r') {
+                   at_debug("·");
+               } else {
+                    at_debug("%c", ((char*)data)[i]);
+               }
+           }
+           at_debug("\n");
+            }
+
         write_len = _fileHandle->write(data, len);
     }
 
