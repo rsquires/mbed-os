@@ -409,19 +409,19 @@ void mbed_vtracef(uint8_t dlevel, const char* grp, const char *fmt, va_list ap)
                 //add group tag
                 switch (dlevel) {
                     case (TRACE_LEVEL_ERROR):
-                        retval = snprintf(ptr, bLeft, "[ERR ][%-4s]: ", grp);
+                        retval = snprintf(ptr, bLeft, "E %-4s: ", grp);
                         break;
                     case (TRACE_LEVEL_WARN):
-                        retval = snprintf(ptr, bLeft, "[WARN][%-4s]: ", grp);
+                        retval = snprintf(ptr, bLeft, "W %-4s: ", grp);
                         break;
                     case (TRACE_LEVEL_INFO):
-                        retval = snprintf(ptr, bLeft, "[INFO][%-4s]: ", grp);
+                        retval = snprintf(ptr, bLeft, "I %-4s: ", grp);
                         break;
                     case (TRACE_LEVEL_DEBUG):
-                        retval = snprintf(ptr, bLeft, "[DBG ][%-4s]: ", grp);
+                        retval = snprintf(ptr, bLeft, "D %-4s: ", grp);
                         break;
                     default:
-                        retval = snprintf(ptr, bLeft, "              ");
+                        retval = snprintf(ptr, bLeft, "        ");
                         break;
                 }
                 if (retval >= bLeft) {
