@@ -26,7 +26,7 @@
 
 #include "mbed-trace/mbed_trace.h"
 #ifndef TRACE_GROUP
-#define TRACE_GROUP  "cellular"
+#define TRACE_GROUP  "CELL"
 #endif // TRACE_GROUP
 
 #else
